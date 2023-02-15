@@ -1,5 +1,4 @@
-.group{
-  background: black;
+.group {
   width: 290px;
   margin: 0 auto 10px;
   display: grid;
@@ -7,12 +6,12 @@
 }
 
 .input-field {
+  background: black;
   padding-left: 10px;
-  background: none;
-  border: 0;
   color: white;
 }
 .select-currency {
+  background: black;
   padding: 15px;
   background: none;
   background-color: black;
