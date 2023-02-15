@@ -2,21 +2,28 @@ import React from 'react';
 
 import './Currency-input.css';
 
-const CurrencyInput = (props) => {
+const CurrencyInput = ({amount, currency, currencies, onAmountChange, onCurrencyChange}) => {
+  const handlerOnAmountChange = (event) => {
+    onAmountChange(event.target.value);
+  };
+  const handlerOnCurrencyChange = (event) => {
+    onCurrencyChange(event.target.value);
+  };
+
   return (
     <div className="group">
       <input
         className='input-field'
         type="text"
-        value={props.amount}
-        onChange={event => props.onAmountChange(event.target.value)}
+        value={amount}
+        onChange={handlerOnAmountChange}
       />
       <select
         className='select-currency'
-        value={props.currency}
-        onChange={event => props.onCurrencyChange(event.target.value)}
+        value={currency}
+        onChange={handlerOnCurrencyChange}
       >
-        {props.currencies.map((currency => (
+        {currencies.map((currency => (
           <option value={currency}>{currency}</option>
         )))}
       </select>
