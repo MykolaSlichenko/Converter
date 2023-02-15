@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 import './Currency-input.css';
 
@@ -23,12 +24,20 @@ const CurrencyInput = ({amount, currency, currencies, onAmountChange, onCurrency
         value={currency}
         onChange={handlerOnCurrencyChange}
       >
-        {currencies.map((currency => (
-          <option value={currency}>{currency}</option>
+        {currencies.map((currencyOption => (
+          <option value={currencyOption} key={currencyOption}>{currencyOption}</option>
         )))}
       </select>
     </div>
   );
+};
+
+CurrencyInput.propTypes = {
+  amount: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  currencies: PropTypes.array,
+  onAmountChange: PropTypes.func,
+  onCurrencyChange: PropTypes.func,
 };
 
 export default CurrencyInput;

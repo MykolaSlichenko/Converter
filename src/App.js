@@ -12,11 +12,11 @@ function App() {
   const [rates, setRates] = useState([]);
 
   const API_KEY = 'BMJFqnXMPMOSAqhVT8jGEbdpZ2zHjxLf';
+  const URL = 'https://api.apilayer.com/';
 
   useEffect(() => {
-    axios.get(`https://api.apilayer.com/fixer/latest?base=USD&apikey=${API_KEY}`) // move api url and apikey to separate consts
+    axios.get(`${URL}fixer/latest?base=USD&apikey=${API_KEY}`)
       .then(response => {
-        console.log(response.data.rates); // remove log if not needed
         setRates(response.data.rates);
       })
       .catch(() => {
@@ -33,27 +33,25 @@ function App() {
     }
   }, [rates]);
 
-  const format = (number) => {
-    return number.toFixed(6); // todo: you can simply return after =>
-  };
+  const format = number => number.toFixed(5);
 
   const handleAmountFirstChange = (amountCurrent) => {
-    setAmountTarget(format(parseInt(amountCurrent) * rates[currencyTarget] / rates[currencyCurrent]));
+    setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setAmountCurrent(amountCurrent);
   };
 
   const handleCurrency1Change = (currencyCurrent) => {
-    setAmountTarget(format(parseInt(amountCurrent) * rates[currencyTarget] / rates[currencyCurrent]));
+    setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setCurrencyCurrent(currencyCurrent);
   };
 
   const handleAmountSecondChange = (amountTarget) => {
-    setAmountCurrent(format(parseInt(amountTarget) * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
     setAmountTarget(amountTarget);
   };
 
   const handleCurrencyTargetChange = (currencyTarget) => {
-    setAmountCurrent(format(parseInt(amountTarget) * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountCurrent(format(amountTarget) * rates[currencyCurrent] / rates[currencyTarget]);
     setCurrencyTarget(currencyTarget);
   };
 
