@@ -1,0 +1,21 @@
+.group{
+  background: black;
+  width: 290px;
+  margin: 0 auto 10px;
+  display: grid;
+  grid-template-columns: 175px 112px;
+}
+
+.input-field {
+  padding-left: 10px;
+  background: none;
+  border: 0;
+  color: white;
+}
+.select-currency {
+  padding: 15px;
+  background: none;
+  background-color: black;
+  border: 0;
+  color: white;
+}
