@@ -41,13 +41,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=USD`)
+    axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=${currencyCurrent}`)
       .then(response => {
         const arrayCurrency = [];
         const dataArray = [];
         for (const [key, value] of Object.entries(response.data.rates)) {
-          // console.log(`${key}: ${value.currencyTarget}`);
-          arrayCurrency.push(value.AUD);
+          // console.log(`${key}: ${value[currencyTarget]}`);
+          arrayCurrency.push(value[currencyTarget]);
           dataArray.push(key);
         }
         setCurrenciesSeries(arrayCurrency);
@@ -56,7 +56,7 @@ function App() {
       .catch(() => {
         console.log('Fail to fetch');
       });
-  }, []);
+  }, [currencyTarget]);
 
   useEffect(() => {
     if (!!rates) {
