@@ -33,7 +33,7 @@ const CurrencyInput = ({amount, currency, currencies, onAmountChange, onCurrency
 };
 
 CurrencyInput.propTypes = {
-  amount: PropTypes.number.isRequired,
+  amount: PropTypes.string.isRequired,
   currency: PropTypes.string.isRequired,
   currencies: PropTypes.array,
   onAmountChange: PropTypes.func,

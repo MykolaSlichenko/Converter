@@ -4,21 +4,35 @@ import axios from 'axios';
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
+import timeseries from './timeseries.json';
+
 import './App.css';
 
 function App() {
-  const [amountCurrent, setAmountCurrent] = useState(1);
-  const [amountTarget, setAmountTarget] = useState(1);
+  const [amountCurrent, setAmountCurrent] = useState('1');
+  const [amountTarget, setAmountTarget] = useState('1');
   const [currencyCurrent, setCurrencyCurrent] = useState('USD');
   const [currencyTarget, setCurrencyTarget] = useState('AUD');
-  const [rates, setRates] = useState([]);
+  const [rates, setRates] = useState(   []   );//to const
   const [currenciesSeries, setCurrenciesSeries] = useState([]);
   const [dataSeries, setDataSeries] = useState([]);
 
   const API_KEY = 'BMJFqnXMPMOSAqhVT8jGEbdpZ2zHjxLf';
   const URL = 'https://api.apilayer.com/fixer/';
 
-  const currenciesData = {
+  // const currenciesData = {
+  //   labels: dataSeries,
+  //   datasets: [
+  //     {
+  //       label: 'Time-Series Endpoint',
+  //       backgroundColor: 'red',
+  //       borderColor: 'red',
+  //       data: currenciesSeries,
+  //     },
+  //   ],
+  // };
+
+  const memoizedData = useMemo(() => ({
     labels: dataSeries,
     datasets: [
       {
@@ -28,9 +42,9 @@ function App() {
         data: currenciesSeries,
       },
     ],
-  };
+  }), [currenciesSeries]);
 
-  const memoizedData = useMemo(() => currenciesData, [currenciesSeries]);
+  // const memoizedData = useMemo(() => currenciesData, [currenciesSeries]);
 
   useEffect(() => {
     axios.get(`${URL}latest?base=USD&apikey=${API_KEY}`)
@@ -43,51 +57,66 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=${currencyCurrent}`)
-      .then(response => {
-        const arrayCurrency = [];
-        const dataArray = [];
-        for (const [key, value] of Object.entries(response.data.rates)) {
-          // console.log(`${key}: ${value[currencyTarget]}`);
-          arrayCurrency.push(value[currencyTarget]);
-          dataArray.push(key);
-        }
-        setCurrenciesSeries(arrayCurrency);
-        setDataSeries(dataArray);
-      })
-      .catch(() => {
-        console.log('Fail to fetch');
-      });
+    const fetchTimeSeries = async () => {
+      console.log(timeseries);
+      const response = timeseries;
+      console.log('response: ',  response);
+      const arrayCurrency = [];
+      const dataArray = [];
+      for (const [key, value] of Object.entries(response.rates)) {
+        // console.log(`${key}: ${value[currencyTarget]}`);
+        arrayCurrency.push(value[currencyTarget]);
+        dataArray.push(key);
+      }
+      setCurrenciesSeries(arrayCurrency);
+      setDataSeries(dataArray);
+    };
+    fetchTimeSeries();
+    // axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=${currencyCurrent}`)
+    //   .then(response => {
+    //     const arrayCurrency = [];
+    //     const dataArray = [];
+    //     for (const [key, value] of Object.entries(response.data.rates)) {
+    //       // console.log(`${key}: ${value[currencyTarget]}`);
+    //       arrayCurrency.push(value[currencyTarget]);
+    //       dataArray.push(key);
+    //     }
+    //     setCurrenciesSeries(arrayCurrency);
+    //     setDataSeries(dataArray);
+    //   })
+    //   .catch(() => {
+    //     console.log('Fail to fetch');
+    //   });
   }, [currencyTarget]);
 
-  useEffect(() => {
-    if (!!rates) {
-      const init = () => {
-        handleAmountFirstChange(1);
-      };
-      init();
-    }
-  }, [rates]);
+  // useEffect(() => {
+  //   if (!!rates) {
+  //     const init = () => {
+  //       handleAmountFirstChange('1');
+  //     };
+  //     init();
+  //   }
+  // }, [rates]);
 
   const format = number => number.toFixed(5);
 
   const handleAmountFirstChange = (amountCurrent) => {
-    setAmountTarget(format(parseInt(amountCurrent) * rates[currencyTarget] / rates[currencyCurrent]));
+    setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setAmountCurrent(amountCurrent);
   };
 
   const handleCurrency1Change = (currencyCurrent) => {
-    setAmountTarget(format(parseInt(amountCurrent) * rates[currencyTarget] / rates[currencyCurrent]));
+    setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setCurrencyCurrent(currencyCurrent);
   };
 
   const handleAmountSecondChange = (amountTarget) => {
-    setAmountCurrent(format(parseInt(amountTarget) * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
     setAmountTarget(amountTarget);
   };
 
   const handleCurrencyTargetChange = (currencyTarget) => {
-    setAmountCurrent(format(parseInt(amountTarget) * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
     setCurrencyTarget(currencyTarget);
   };
 
