@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import CurrencyInput from './components/CurrencyInput/Currency-input';
 import axios from 'axios';
 import Chart from "chart.js/auto";
@@ -29,6 +29,8 @@ function App() {
       },
     ],
   };
+
+  const memoizedData = useMemo(() => currenciesData, [currenciesSeries]);
 
   useEffect(() => {
     axios.get(`${URL}latest?base=USD&apikey=${API_KEY}`)
@@ -106,7 +108,7 @@ function App() {
         amount={amountTarget}
         currency={currencyTarget}
       />
-      <Line data={currenciesData} className='chart' />
+      <Line data={memoizedData} className='chart' />
     </div>
   );
 }
