@@ -8,29 +8,20 @@ import timeseries from './timeseries.json';
 
 import './App.css';
 
+// const API_KEY = 'BMJFqnXMPMOSAqhVT8jGEbdpZ2zHjxLf';
+// const URL = 'https://api.apilayer.com/fixer/';
+const ratesArray = [];
+
+
 function App() {
   const [amountCurrent, setAmountCurrent] = useState('1');
   const [amountTarget, setAmountTarget] = useState('1');
   const [currencyCurrent, setCurrencyCurrent] = useState('USD');
   const [currencyTarget, setCurrencyTarget] = useState('AUD');
-  const [rates, setRates] = useState(   []   );//to const
+  const [rates, setRates] = useState(ratesArray);
   const [currenciesSeries, setCurrenciesSeries] = useState([]);
   const [dataSeries, setDataSeries] = useState([]);
 
-  const API_KEY = 'BMJFqnXMPMOSAqhVT8jGEbdpZ2zHjxLf';
-  const URL = 'https://api.apilayer.com/fixer/';
-
-  // const currenciesData = {
-  //   labels: dataSeries,
-  //   datasets: [
-  //     {
-  //       label: 'Time-Series Endpoint',
-  //       backgroundColor: 'red',
-  //       borderColor: 'red',
-  //       data: currenciesSeries,
-  //     },
-  //   ],
-  // };
 
   const memoizedData = useMemo(() => ({
     labels: dataSeries,
@@ -44,18 +35,6 @@ function App() {
     ],
   }), [currenciesSeries]);
 
-  // const memoizedData = useMemo(() => currenciesData, [currenciesSeries]);
-
-  useEffect(() => {
-    axios.get(`${URL}latest?base=USD&apikey=${API_KEY}`)
-      .then(response => {
-        setRates(response.data.rates);
-      })
-      .catch(() => {
-        console.log('Error occured when fetching');
-      });
-  }, []);
-
   useEffect(() => {
     const fetchTimeSeries = async () => {
       console.log(timeseries);
@@ -68,12 +47,14 @@ function App() {
         arrayCurrency.push(value[currencyTarget]);
         dataArray.push(key);
       }
+      setRates(response.rates_latest);
       setCurrenciesSeries(arrayCurrency);
       setDataSeries(dataArray);
     };
     fetchTimeSeries();
     // axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=${currencyCurrent}`)
     //   .then(response => {
+    //     console.log('response', response);
     //     const arrayCurrency = [];
     //     const dataArray = [];
     //     for (const [key, value] of Object.entries(response.data.rates)) {
@@ -89,14 +70,14 @@ function App() {
     //   });
   }, [currencyTarget]);
 
-  // useEffect(() => {
-  //   if (!!rates) {
-  //     const init = () => {
-  //       handleAmountFirstChange('1');
-  //     };
-  //     init();
-  //   }
-  // }, [rates]);
+  useEffect(() => {
+    if (!!rates) {
+      const init = () => {
+        handleAmountFirstChange('1');
+      };
+      init();
+    }
+  }, [rates]);
 
   const format = number => number.toFixed(5);
 
@@ -110,10 +91,10 @@ function App() {
     setCurrencyCurrent(currencyCurrent);
   };
 
-  const handleAmountSecondChange = (amountTarget) => {
-    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
-    setAmountTarget(amountTarget);
-  };
+  // const handleAmountSecondChange = (amountTarget) => {
+  //   setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
+  //   setAmountTarget(amountTarget);
+  // };
 
   const handleCurrencyTargetChange = (currencyTarget) => {
     setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
@@ -131,7 +112,7 @@ function App() {
         currency={currencyCurrent}
       />
       <CurrencyInput
-        onAmountChange={handleAmountSecondChange}
+        // onAmountChange={handleAmountSecondChange}
         onCurrencyChange={handleCurrencyTargetChange}
         currencies={Object.keys(rates)}
         amount={amountTarget}
