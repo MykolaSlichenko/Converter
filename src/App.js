@@ -51,7 +51,7 @@ function App() {
   useEffect(() => {
     if (!!rates) {
       const init = () => {
-        handleAmountFirstChange('1');
+        handleAmountCurrentChange('1');
       };
       init();
     }
@@ -59,17 +59,17 @@ function App() {
 
   const format = number => number.toFixed(5);
 
-  const handleAmountFirstChange = (amountCurrent) => {
+  const handleAmountCurrentChange = (amountCurrent) => {
     setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setAmountCurrent(amountCurrent);
   };
 
-  const handleCurrency1Change = (currencyCurrent) => {
+  const handleCurrencyCurrentChange = (currencyCurrent) => {
     setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setCurrencyCurrent(currencyCurrent);
   };
 
-  const handleAmountSecondChange = (amountTarget) => {
+  const handleAmountTargetChange = (amountTarget) => {
     setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
     setAmountTarget(amountTarget);
   };
@@ -83,14 +83,14 @@ function App() {
     <div>
       <h1 className='header'>Converter Currency</h1>
       <CurrencyInput
-        onAmountChange={handleAmountFirstChange}
-        onCurrencyChange={handleCurrency1Change}
+        onAmountChange={handleAmountCurrentChange}
+        onCurrencyChange={handleCurrencyCurrentChange}
         currencies={Object.keys(rates)}
         amount={amountCurrent}
         currency={currencyCurrent}
       />
       <CurrencyInput
-        onAmountChange={handleAmountSecondChange}
+        onAmountChange={handleAmountTargetChange}
         onCurrencyChange={handleCurrencyTargetChange}
         currencies={Object.keys(rates)}
         amount={amountTarget}
