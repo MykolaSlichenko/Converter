@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import CurrencyInput from './components/CurrencyInput/Currency-input';
-import axios from 'axios';
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
@@ -8,26 +7,24 @@ import timeseries from './timeseries.json';
 
 import './App.css';
 
-// const API_KEY = 'BMJFqnXMPMOSAqhVT8jGEbdpZ2zHjxLf';
-// const URL = 'https://api.apilayer.com/fixer/';
-const ratesArray = [];
 
+const initialArray = [];
 
 function App() {
   const [amountCurrent, setAmountCurrent] = useState('1');
   const [amountTarget, setAmountTarget] = useState('1');
   const [currencyCurrent, setCurrencyCurrent] = useState('USD');
   const [currencyTarget, setCurrencyTarget] = useState('AUD');
-  const [rates, setRates] = useState(ratesArray);
-  const [currenciesSeries, setCurrenciesSeries] = useState([]);
-  const [dataSeries, setDataSeries] = useState([]);
+  const [rates, setRates] = useState(initialArray);
+  const [currenciesSeries, setCurrenciesSeries] = useState(initialArray);
+  const [dataSeries, setDataSeries] = useState(initialArray);
 
 
   const memoizedData = useMemo(() => ({
     labels: dataSeries,
     datasets: [
       {
-        label: 'Time-Series Endpoint',
+        label: 'Time-Series (Base USD)',
         backgroundColor: 'red',
         borderColor: 'red',
         data: currenciesSeries,
@@ -37,13 +34,10 @@ function App() {
 
   useEffect(() => {
     const fetchTimeSeries = async () => {
-      console.log(timeseries);
       const response = timeseries;
-      console.log('response: ',  response);
       const arrayCurrency = [];
       const dataArray = [];
       for (const [key, value] of Object.entries(response.rates)) {
-        // console.log(`${key}: ${value[currencyTarget]}`);
         arrayCurrency.push(value[currencyTarget]);
         dataArray.push(key);
       }
@@ -52,22 +46,6 @@ function App() {
       setDataSeries(dataArray);
     };
     fetchTimeSeries();
-    // axios.get(`${URL}timeseries?apikey=${API_KEY}&start_date=2022-02-08&end_date=2023-02-08&base=${currencyCurrent}`)
-    //   .then(response => {
-    //     console.log('response', response);
-    //     const arrayCurrency = [];
-    //     const dataArray = [];
-    //     for (const [key, value] of Object.entries(response.data.rates)) {
-    //       // console.log(`${key}: ${value[currencyTarget]}`);
-    //       arrayCurrency.push(value[currencyTarget]);
-    //       dataArray.push(key);
-    //     }
-    //     setCurrenciesSeries(arrayCurrency);
-    //     setDataSeries(dataArray);
-    //   })
-    //   .catch(() => {
-    //     console.log('Fail to fetch');
-    //   });
   }, [currencyTarget]);
 
   useEffect(() => {
@@ -91,19 +69,19 @@ function App() {
     setCurrencyCurrent(currencyCurrent);
   };
 
-  // const handleAmountSecondChange = (amountTarget) => {
-  //   setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
-  //   setAmountTarget(amountTarget);
-  // };
+  const handleAmountSecondChange = (amountTarget) => {
+    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountTarget(amountTarget);
+  };
 
   const handleCurrencyTargetChange = (currencyTarget) => {
-    setAmountCurrent(format(amountTarget * rates[currencyCurrent] / rates[currencyTarget]));
+    setAmountTarget(format(amountCurrent * rates[currencyTarget] / rates[currencyCurrent]));
     setCurrencyTarget(currencyTarget);
   };
 
   return (
     <div>
-      <h1>Currency</h1>
+      <h1 className='header'>Converter Currency</h1>
       <CurrencyInput
         onAmountChange={handleAmountFirstChange}
         onCurrencyChange={handleCurrency1Change}
@@ -112,7 +90,7 @@ function App() {
         currency={currencyCurrent}
       />
       <CurrencyInput
-        // onAmountChange={handleAmountSecondChange}
+        onAmountChange={handleAmountSecondChange}
         onCurrencyChange={handleCurrencyTargetChange}
         currencies={Object.keys(rates)}
         amount={amountTarget}
